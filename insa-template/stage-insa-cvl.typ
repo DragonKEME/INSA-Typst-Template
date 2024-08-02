@@ -15,14 +15,19 @@
   summary-french,
   summary-english,
   illustration,
+  confidential: false,
   omit-outline: false,
   lang: "fr",
+  footer: [],
   doc
 ) = {
   //set document(author: metadata-authors, date: metadata-date, title: metadata-title)
 
   //set text(lang: lang, font: heading-fonts)
-  set page("a4", margin: 0cm)
+  set page("a4", margin:(top: 0cm, left: 0cm, right: 0cm), footer: block(width: 100%, {
+    set align(center)
+    block(width: 77%, footer)
+  } ))
 
   set par(justify: false) // only for the cover
 
@@ -35,7 +40,7 @@
     top + left,
     dx: 1.97cm,
     dy: 1.34cm,
-    image("assets/logo.png", width: 8.10cm)
+    image("../assets/logo.png", width: 8.10cm)
   )
 
   // personnal data
@@ -46,15 +51,15 @@
     grid(
       align: left,
 
-      text(font: "Arial", weight: "bold", fill: blue_name, size: 16pt, name),
+      text(font: "Arial", weight: "black", fill: blue_name, size: 14pt, name),
       v(0.25cm),
-      text(font: "Arial", weight: "bold", fill: blue_name, size: 16pt, lastname),
+      text(font: "Arial", weight: "black", fill: blue_name, size: 12pt, lastname),
       v(0.98cm),
-      text(font: "Arial", fill: gray_item, size: 12pt, department),
+      text(font: "Arial", weight: "bold", size: 14pt, department),
       v(1.17cm),
       text(font: "Arial", size: 12pt, "Année universitaire"), // TODO: change to use translations
       v(0.58cm),
-      text(font: "Arial", fill: gray_item, size: 12pt, year)
+      text(font: "Arial", weight: "bold", size: 14pt, year)
     )
   )
 
@@ -77,11 +82,20 @@
         dy: 0.28cm,
         grid(
           align: left,
+          let black_checkbox = rect(width: 0.39cm, height: 0.39cm),
+          let red_checkbox = rect(width: 0.39cm, height: 0.39cm, stroke: red),
 
-          // TODO: generate this item following a "confidential" variable
-          grid( columns: 3, align: left + horizon, rect(width: 0.39cm, height: 0.39cm), h(0.58cm), text(font: "Arial", size: 11pt, "NON")),
+          if (confidential != none) {
+            if confidential {
+              red_checkbox = rect(width: 0.39cm, height: 0.39cm, inset: 0pt, stroke: red, { place(line(start: (0%,0%), end: (100%, 100%), stroke: red)); line(start: (100%,0%), end: (0%, 100%), stroke: red)});
+            } else {
+              black_checkbox = rect(width: 0.39cm, height: 0.39cm, inset: 0pt, { place(line(start: (0%,0%), end: (100%, 100%))); line(start: (100%,0%), end: (0%, 100%))});
+            }
+          },
+          
+          grid( columns: 3, align: left + horizon, black_checkbox, h(0.58cm), text(font: "Arial", size: 11pt, "NON")),
           v(0.29cm),
-          grid( columns: 3, align: left + horizon, rect(width: 0.39cm, height: 0.39cm, stroke: red), h(0.58cm), text(font: "Arial", fill: red, weight: "bold", size: 14pt, "OUI")),
+          grid( columns: 3, align: left + horizon, red_checkbox, h(0.58cm), text(font: "Arial", fill: red, weight: "bold", size: 14pt, "OUI")),
         )
       )
       place(
@@ -104,9 +118,9 @@
       #set align(center)
       #grid(
         align: center,
-        text(font: "Arial", weight: "bold", fill: gray_item, size: 16pt, title),
+        text(font: "Arial", weight: "bold", fill: blue_name, size: 14pt, title),
         v(0.60cm),
-        text(font: "Arial", fill: gray_item, size: 11pt, type),
+        text(font: "Arial", weight: "bold", size: 12pt, type),
       )
     ]
   )
@@ -147,9 +161,9 @@
     grid(
       align: left,
 
-      text(font: "Arial", weight: "bold", size: 14pt, company),
+      text(font: "Arial", weight: "bold", size: 16pt, company),
       v(0.55cm),
-      text(font: "Arial", size: 11pt, company-city)
+      text(font: "Arial", weight: "bold", size: 14pt, company-city)
     )
   )
 
@@ -160,5 +174,9 @@
     dy: 24.50cm,
     company-logo
   )
+
+  set page("a4", margin: auto, footer: footer)
+  pagebreak()
+  doc
 
 }
