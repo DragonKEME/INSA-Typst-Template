@@ -1,33 +1,47 @@
+#import "insa-common.typ": insa-school-name
+#import "document-template.typ": insa-translate, insa-page-numbering-state, insa-hide-page-counter, insa-show-page-counter
+
+#let insa-cvl-stage-fonts = ("Arial", "Liberation Sans")
+
 #let insa-cvl-stage(
-  name,
+  firstname,
   lastname,
   department,
   year,
   title,
-  type,
   company,
   company-logo,
   company-tutor,
-  company-tutor-type,
   company-tutor-function,
   company-city,
   insa-tutor,
   summary-french,
   summary-english,
   illustration,
+  thanks-page: none,
   confidential: false,
   omit-outline: false,
   lang: "fr",
-  footer: [],
   doc
 ) = {
-  //set document(author: metadata-authors, date: metadata-date, title: metadata-title)
 
-  //set text(lang: lang, font: heading-fonts)
-  set page("a4", margin:(top: 0cm, left: 0cm, right: 0cm), footer: block(width: 100%, {
-    set align(center)
-    block(width: 77%, footer)
-  } ))
+  let insa-cvl-stage-translations = (
+    report: ("fr": "Rapport de stage", "en": "Internship report"),
+    academic-year: ("fr": "Année universitaire", "en": "Academic year"),
+    confidential: ("fr": "Rapport CONFIDENTIEL", "en": "CONFIDENTIAL report"),
+    confidential-mention: ("fr": "Si oui est coché, signature du tuteur entreprise obligatoire", "en": "If yes is checked, signature of company tutor required"),
+    YES: ("fr": "OUI", "en": "YES"),
+    NO: ("fr": "NON", "en": "NO"),
+    company-tutor: ("fr": "Tuteur entreprise", "en": "Training supervisor"),
+    insa-tutor: ("fr": "Enseignant référent", "en": "Academic supervisor"),
+    thanks-heading: ("fr": "Remerciements", "en": "Special Thanks")
+  )
+
+  let insa-cvl-stage-translate(key, lang, placeholders: (:)) = insa-translate(insa-cvl-stage-translations, key, lang, placeholders: placeholders)
+
+  set text(lang: lang, font: insa-cvl-stage-fonts)
+
+  set page("a4", margin:(top: 0cm, left: 0cm, right: 0cm))
 
   set par(justify: false) // only for the cover
 
@@ -51,15 +65,15 @@
     grid(
       align: left,
 
-      text(font: "Arial", weight: "black", fill: blue_name, size: 14pt, name),
+      text(font: insa-cvl-stage-fonts, weight: "black", fill: blue_name, size: 14pt, firstname),
       v(0.25cm),
-      text(font: "Arial", weight: "black", fill: blue_name, size: 12pt, lastname),
+      text(font: insa-cvl-stage-fonts, weight: "black", fill: blue_name, size: 12pt, lastname),
       v(0.98cm),
-      text(font: "Arial", weight: "bold", size: 14pt, department),
+      text(font: insa-cvl-stage-fonts, weight: "bold", size: 14pt, department),
       v(1.17cm),
-      text(font: "Arial", size: 12pt, "Année universitaire"), // TODO: change to use translations
+      text(font: insa-cvl-stage-fonts, size: 12pt, insa-cvl-stage-translate("academic-year", lang)),
       v(0.58cm),
-      text(font: "Arial", weight: "bold", size: 14pt, year)
+      text(font: insa-cvl-stage-fonts, weight: "bold", size: 14pt, year)
     )
   )
 
@@ -74,7 +88,7 @@
         top + left,
         dx: 0.22cm,
         dy: 0.37cm,
-        text(font: "Arial", weight: "bold", size: 12pt)[#underline[Rapport CONFIDENTIEL]],
+        text(font: insa-cvl-stage-fonts, weight: "bold", size: 12pt)[#underline(insa-cvl-stage-translate("confidential", lang))],
       )
       place(
         top + left,
@@ -93,9 +107,9 @@
             }
           },
           
-          grid( columns: 3, align: left + horizon, black_checkbox, h(0.58cm), text(font: "Arial", size: 11pt, "NON")),
+          grid( columns: 3, align: left + horizon, black_checkbox, h(0.58cm), text(font: insa-cvl-stage-fonts, size: 11pt, insa-cvl-stage-translate("NO", lang))),
           v(0.29cm),
-          grid( columns: 3, align: left + horizon, red_checkbox, h(0.58cm), text(font: "Arial", fill: red, weight: "bold", size: 14pt, "OUI")),
+          grid( columns: 3, align: left + horizon, red_checkbox, h(0.58cm), text(font: insa-cvl-stage-fonts, fill: red, weight: "bold", size: 14pt, insa-cvl-stage-translate("YES", lang))),
         )
       )
       place(
@@ -103,8 +117,8 @@
         dy: 1.56cm,
         block(width: 100%, spacing: 0pt)[
           #set align(center)
-          #set text(font: "Arial", size: 9pt)
-          Si oui est coché, signature du tuteur entreprise obligatoire
+          #set text(font: insa-cvl-stage-fonts, size: 9pt)
+          #insa-cvl-stage-translate("confidential-mention", lang)
         ]
       )
     }),
@@ -118,9 +132,9 @@
       #set align(center)
       #grid(
         align: center,
-        text(font: "Arial", weight: "bold", fill: blue_name, size: 14pt, title),
+        text(font: insa-cvl-stage-fonts, weight: "bold", fill: blue_name, size: 14pt, title),
         v(0.60cm),
-        text(font: "Arial", weight: "bold", size: 12pt, type),
+        text(font: insa-cvl-stage-fonts, weight: "bold", size: 12pt, insa-cvl-stage-translate("report", lang)),
       )
     ]
   )
@@ -141,15 +155,15 @@
     grid(
       align: left,
 
-      text(font: "Arial", size: 11pt)[#underline[Tuteur #company-tutor-type] : ],
+      text(font: insa-cvl-stage-fonts, size: 11pt)[#underline[#insa-cvl-stage-translate("company-tutor", lang)] : ],
       v(0.35cm),
-      text(font: "Arial", weight: "bold", size: 12pt, company-tutor),
+      text(font: insa-cvl-stage-fonts, weight: "bold", size: 12pt, company-tutor),
       v(0.5cm),
-      text(font: "Arial", size: 12pt, company-tutor-function),
+      text(font: insa-cvl-stage-fonts, size: 12pt, company-tutor-function),
       v(2.19cm),
-      text(font: "Arial", size: 11pt)[#underline[Enseignant référent] : ],
+      text(font: insa-cvl-stage-fonts, size: 11pt)[#underline[#insa-cvl-stage-translate("insa-tutor", lang)] : ],
       v(0.35cm),
-      text(font: "Arial", weight: "bold", size: 12pt, insa-tutor),
+      text(font: insa-cvl-stage-fonts, weight: "bold", size: 12pt, insa-tutor),
     )
   )
 
@@ -161,9 +175,9 @@
     grid(
       align: left,
 
-      text(font: "Arial", weight: "bold", size: 16pt, company),
+      text(font: insa-cvl-stage-fonts, weight: "bold", size: 16pt, company),
       v(0.55cm),
-      text(font: "Arial", weight: "bold", size: 14pt, company-city)
+      text(font: insa-cvl-stage-fonts, weight: "bold", size: 14pt, company-city)
     )
   )
 
@@ -175,8 +189,72 @@
     company-logo
   )
 
-  set page("a4", margin: auto, footer: footer)
+  set page(
+    "a4",
+    margin: (x: 1.75cm, y: 2.5cm),
+    footer: context {
+      place(
+        right + bottom,
+        dx: page.margin.at("right") - 0.6cm,
+        dy: -0.6cm,
+        box(width: 2.34cm, height: 2.34cm, image("assets/footer.png"))
+      )
+      if insa-page-numbering-state.get() {
+        place(
+          right + bottom,
+          dx: page.margin.at("right") - 0.6cm,
+          dy: -0.6cm,
+          box(width: 1.15cm, height: 1.15cm, align(center + horizon, text(fill: white, size: 14pt, font: insa-cvl-stage-fonts, weight: "bold", counter(page).display())))
+        )
+      }
+    },)
+  
   pagebreak()
+
+  set par(justify: true, first-line-indent: (amount: 1em, all: true), leading: {0.67em})
+  set figure(numbering: "1")
+  set outline(indent: auto)
+  show figure.where(kind: table): set figure.caption(position: top)
+  show figure.where(kind: image): set figure(supplement: "Figure") // par défaut, Typst affiche "Fig."
+  show figure.caption: it => [
+    #strong[#it.supplement #context it.counter.display(it.numbering)] : #it.body
+  ]
+
+  insa-hide-page-counter()
+  set text(font: insa-cvl-stage-fonts, weight: "regular", size: 10pt)
+
+  set heading(numbering: "1.1    ")
+  show heading.where(level: 1): it => text(size: 18pt, upper(it))
+  show heading.where(level: 2): set text(size: 16pt)
+  show heading.where(level: 3): set text(size: 15pt)
+  show heading.where(level: 4): set text(size: 14pt)
+
+  if thanks-page != none and thanks-page != [] {
+    heading(insa-cvl-stage-translate("thanks-heading", lang), numbering: none, outlined: false)
+    thanks-page
+    pagebreak()
+  }
+
+  insa-show-page-counter(current-page: 1)
+
+  if summary-english != none or summary-english != [] or summary-french != none or summary-french != [] {
+    if summary-french != none or summary-french {
+      heading("Résumé", numbering: none, outlined: false)
+      summary-french
+    }
+    if summary-english != none or summary-english {
+      heading("Abstract", numbering: none, outlined: false)
+      summary-english
+    }
+    pagebreak()
+  }
+
+  if not omit-outline {
+    show outline: set heading(outlined: false)
+    outline()
+    pagebreak()
+  }
+
   doc
 
 }
