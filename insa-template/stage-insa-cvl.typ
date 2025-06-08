@@ -40,7 +40,7 @@
     top + left,
     dx: 1.97cm,
     dy: 1.34cm,
-    image("assets/logo.png", width: 8.10cm)
+    image("assets/cvl/logo.png", width: 8.10cm)
   )
 
   // personnal data
